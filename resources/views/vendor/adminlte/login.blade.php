@@ -85,7 +85,7 @@
         </div>
         <!-- /.login-box-body -->
         </br></br>
-            <a href="{{ url('forma') }}" class="btn btn-block btn-primary btn-lg" style="width: 100%;">Cadastrar manifestação</a>
+            <a href="/manifestacao" class="btn btn-block btn-primary btn-lg" style="width: 100%;">Cadastrar manifestação</a>
         </div>
     </div><!-- /.login-box -->
 @stop

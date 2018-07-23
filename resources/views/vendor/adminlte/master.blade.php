@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/vendor/font-awesome/css/font-awesome.min.css') }}">
     <!-- Ionicons -->
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/vendor/Ionicons/css/ionicons.min.css') }}">
-    
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" href="{{ asset('css/admin_custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/manifestacao.css') }}">
 
     @if(config('adminlte.plugins.select2'))
         <!-- Select2 -->
@@ -25,12 +25,10 @@
 
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/AdminLTE.min.css') }}">
-    <link rel="stylesheet" href="{{ URL::asset('/css/admin_custom.css') }}">
 
     @if(config('adminlte.plugins.datatables'))
         <!-- DataTables -->
-        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css"/>
+        <link rel="stylesheet" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
     @endif
 
     @yield('adminlte_css')
@@ -47,18 +45,10 @@
 
 @yield('body')
 
-    <script src="{{ asset('vendor/adminlte/vendor/jquery/dist/jquery.min.js') }}"></script>
-    <script src="{{ asset('vendor/adminlte/vendor/jquery/dist/jquery.slimscroll.min.js') }}"></script>
-    <script src="{{ asset('vendor/adminlte/vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-    
-    <script type="text/javascript" src="{{ URL::asset('CpfCnpj/jquery.cpfcnpj.js') }}"></script>
-    <script type="text/javascript" src="https://www.malot.fr/bootstrap-datetimepicker/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
-    <script type="text/javascript" src="{{ URL::asset('js/tables.js') }}"></script>
-    
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.js"></script>
-    {{-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> --}}
+<script src="{{ asset('vendor/adminlte/vendor/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ asset('vendor/adminlte/vendor/jquery/dist/jquery.slimscroll.min.js') }}"></script>
+<script src="{{ asset('vendor/adminlte/vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.js"></script>
 
 @if(config('adminlte.plugins.select2'))
     <!-- Select2 -->
@@ -67,8 +57,7 @@
 
 @if(config('adminlte.plugins.datatables'))
     <!-- DataTables -->
-    <script src="{{ URL::asset('DataTables/DataTables-1.10.16/js/jquery.dataTables.js') }}"></script>
-    <script src="{{ URL::asset('DataTables/DataTables-1.10.16/js/dataTables.bootstrap.js') }}"></script>
+    <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
 @endif
 
 @if(config('adminlte.plugins.chartjs'))

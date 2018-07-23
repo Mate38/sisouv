@@ -11,17 +11,8 @@
 |
 */
 
-Route::get('/forma', function () {
-    return view('manifestacao.forma');
-});
 
-Route::get('/cadastro', function () {
-    return view('manifestacao.cadastro');
-});
-
-Route::get('/manifestacao', function () {
-    return view('manifestacao.manifestacao');
-});
+Route::get('/manifestacao', 'ManifestacaoController@manifestacao');
 
 //Route::get('/manifestacao', 'ManifestacaoController@create');
 
