@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use GMaps;
 
 class ManifestacaoController extends Controller
 {
@@ -21,7 +22,24 @@ class ManifestacaoController extends Controller
      */
     public function manifestacao()
     {
-        return view('manifestacao.manifestacao');
+        $config = array();
+        $config['center'] = '-27.011083546744747, -51.14608210774662';
+        $config['zoom'] = '16';
+        $config['map_height'] = "40%";
+        GMaps::initialize($config);
+
+        $marker = array();
+        $marker['position'] = '-27.011083546744747, -51.14608210774662';
+        $marker['draggable'] = true;
+        $marker['ondragend'] = '$("#input-latitude").val(event.latLng.lat()); $("#input-longitude").val(event.latLng.lng());';
+        GMaps::add_marker($marker);
+        $map = GMaps::create_map();
+
+        // echo $map['js'];
+        // echo $map['html'];
+        // GMaps::load(view('manifestacao.manifestacao', $data));
+        //dd($map);
+        return view('manifestacao.manifestacao', ['map' => $map]);
     }
 
     /**
@@ -42,7 +60,7 @@ class ManifestacaoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request);
     }
 
     /**

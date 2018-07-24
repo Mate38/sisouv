@@ -14,6 +14,8 @@
 
 Route::get('/manifestacao', 'ManifestacaoController@manifestacao');
 
+Route::post('/manifestacao', 'ManifestacaoController@store');
+
 //Route::get('/manifestacao', 'ManifestacaoController@create');
 
 Auth::routes();

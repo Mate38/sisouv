@@ -54,9 +54,12 @@
             </div>
         </div>
         
-        <form action="">
+        <form method="POST" action="/manifestacao" enctype="multipart/form-data">
+            @csrf
             <input type="text" name="sigilo" id="input-forma" value="" hidden readonly>
             <input type="text" name="tipo" id="input-tipo" value="" hidden readonly>
+            <input type="text" name="latitude" id="input-latitude" value="" hidden readonly>
+            <input type="text" name="longitude" id="input-longitude" value="" hidden readonly>
             <div class="setup-content" id="step-1">
                 <h3 class="text-center">Forma de manifestação</h3>                
                 <div class="row row-centered div-forma">
@@ -252,7 +255,7 @@
                                 </div>	
                     
                                 <div class="box-footer">
-                                    <button class="btn bg-blue nextBtn pull-right" type="button">Próximo</button>
+                                    <button class="btn bg-blue nextBtn pull-right" type="button" id="btn-submit">Próximo</button>
                                 </div>
                             </div>
                         </div>
@@ -260,16 +263,16 @@
                 </div>
             </div>
             
-            <div class="box box-primary setup-content" id="step-4">
+            <div class="box box-primary setup-content" id="step-4" style="display: block;">
                 <div class="box-heading">
                     <h3 class="box-title">Manifestação</h3>
                 </div>
                 <div class="form-horizontal">
                     <div class="box-body">
                         <div class="form-group has-feedback {{ $errors->has('email') ? 'has-error' : '' }}">
-                            <label for="email" class="col-sm-2 control-label">Email *</label>
+                            <label for="email" class="col-sm-2 control-label">Email </label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" name="email" id="email" placeholder="" minlength="7" maxlength="50" value="{{old('email')}}" required>
+                                <input type="email" class="form-control" name="email" id="email" placeholder="" minlength="7" maxlength="50" value="{{old('email')}}">
                             </div>
                             @if ($errors->has('email'))
                                 <span class="help-block">
@@ -277,14 +280,33 @@
                                 </span>
                             @endif
                         </div>
-                        <div class="form-group has-feedback {{ $errors->has('uf') ? 'has-error' : '' }}">
-                            <label for="uf" class="col-sm-2 control-label">Unidade Resposável *</label>
+                        <div class="form-group has-feedback {{ $errors->has('unidade') ? 'has-error' : '' }}">
+                            <label for="unidade" class="col-sm-2 control-label">Unidade Resposável</label>
                             <div class="col-sm-10">
-                                <select id="uf" class="form-control" name="uf" required>
+                                <select id="unidade" class="form-control" name="unidade">
                                     <option value="0">--- Selecione a unidade ---</option>
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label for="local" class="col-sm-2 control-label">Localização </label>
+                            <div class="col-sm-10">
+                                <?php echo $map['html']; ?>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback {{ $errors->has('manifestacao') ? 'has-error' : '' }}">
+                            <label for="manifestacao" class="col-sm-2 control-label">Manifestação *</label>
+                            <div class="col-sm-10">
+                                <textarea id="field" class="form-control" rows="6" name="manifestacao" maxlength="1000" placeholder=""></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="anexos" class="col-sm-2 control-label">Anexos:</label>
+                            <div class="col-sm-10">
+                                <input type="file" name="file" value="file" class="form-control-file" multiple>
+                            </div>
+                        </div>               
+                        
                     </div>
                 </div>
                 <div class="box-body">
@@ -294,12 +316,13 @@
         </form>
     </div>
 
-    <div class="row footer-content">
+    {{-- <div class="row footer-content">
         <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
-            <a href="http://www.videira.sc.gov.br/">Prefeitura Municipal de Videira</a>
-            <p>&copy; 2018 Equipe de Desenvolvimento do Setor de Ti.<p>
+            <a href="http://www.videira.sc.gov.br/" target="_blank" style="color: #FFF;">Prefeitura Municipal de Videira
+                <p style="color: #FFF;">&copy; 2018 Equipe de Desenvolvimento do Setor de Ti.<p>
+            </a>
         </div>  
-    </div>
+    </div> --}}
 @stop
 
 @section('css')
@@ -307,10 +330,12 @@
 @stop
 
 @section('js')
+    
     <script src="{{ asset('vendor/adminlte/vendor/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('vendor/adminlte/vendor/jquery/dist/jquery.slimscroll.min.js') }}"></script>
     <script src="{{ asset('vendor/adminlte/vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.js"></script>
+    <?php echo $map['js']; ?>
     <script>
     $(document).ready(function () {
 
@@ -321,12 +346,23 @@
         allWells.hide();
 
         navListItems.click(function (e) {
+            var sigilo
             $('.conteudo').css('height', '100%');
             e.preventDefault();
             var $target = $($(this).attr('href')),
                 $item = $(this);
 
-            if (!$item.hasClass('disabled')) {
+            var sigilo = localStorage.getItem('sigilo');
+
+            //console.log(sigilo);
+            if(
+                ($target[0].id == 'step-3' && sigilo == 1) || 
+                (($target[0].id == 'step-2' || $target[0].id == 'step-3' || $target[0].id == 'step-4') && $("#input-forma").val() == "") || 
+                (($target[0].id == 'step-3' || $target[0].id == 'step-4') && $("#input-tipo").val() == "") ||
+                (($target[0].id == 'step-4') && verifyCadastro())
+            ){
+                //console.log($target[0].id);
+            }else if (!$item.hasClass('disabled')) {
                 navListItems.removeClass('btn-success').addClass('btn-default');
                 $item.addClass('btn-success');
                 allWells.hide();
@@ -336,11 +372,18 @@
         });
 
         allNextBtn.click(function () {
-            var curStep = $(this).closest(".setup-content"),
-                curStepBtn = curStep.attr("id"),
-                nextStepWizard = $('div.setup-box div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
-                curInputs = curStep.find("input[type='text'],input[type='url']"),
-                isValid = true;
+            var sigilo = localStorage.getItem('sigilo');
+            var curStep = $(this).closest(".setup-content");
+            var curStepBtn = curStep.attr("id");
+            if(curStepBtn == 'step-2' && sigilo == 1){
+                var nextStepWizard = $('div.setup-box div a[href="#step-3"]').parent().next().children("a");
+            }else{
+                var nextStepWizard = $('div.setup-box div a[href="#' + curStepBtn + '"]').parent().next().children("a");
+            }
+            var curInputs = curStep.find("input[type='text'],input[type='url']");
+            var isValid = true;
+
+            console.log(curStepBtn);
 
             $(".form-group").removeClass("has-error");
             for (var i = 0; i < curInputs.length; i++) {
@@ -355,6 +398,30 @@
 
         $('div.setup-box div a.btn-success').trigger('click');
     });
+
+    function verifyCadastro(){
+        var tipo = document.querySelector('input[name="tipoPessoa"]:checked').value;
+		if(tipo == 1){
+            if($("#cpf").val() == ""){
+                return false;
+            }
+        }else{
+            if($("#cnpj").val() == ""){
+                return false;
+            }
+        }
+        if( $("#nome").val() == ""){
+            return false;
+        }
+        if( $("#email").val() == ""){
+            return false;
+        }
+        if( $("#telefone1").val() == ""){
+            return false;
+        }
+
+        return true;
+    }
     </script>
     <script>
         function verifyTipoPessoa(){
@@ -436,6 +503,12 @@
                 $("#btn-cadastro").css('background-color', '#68abf9');  
                 $("#check-cadastro").css('display', 'none');
                 $("#btn-next-forma").prop('disabled', false);
+                $("#cnpj").prop("required", false);
+				$("#cpf").prop("required", false);
+                $("#nome").prop("required", false);
+                $("#email").prop("required", false);
+                $("#telefone1").prop("required", false);
+                localStorage.setItem('sigilo', 1);
             });
             $("#btn-cadastro").click(function(){
                 $("#input-forma").val("0"); 
@@ -444,7 +517,14 @@
                 $("#btn-anonimo").css('background-color', '#68abf9');  
                 $("#check-anonimo").css('display', 'none');
                 $("#btn-next-forma").prop('disabled', false);
+                $("#cnpj").prop("required", true);
+				$("#cpf").prop("required", true);
+                $("#nome").prop("required", true);
+                $("#email").prop("required", true);
+                $("#telefone1").prop("required", true);
+                localStorage.setItem('sigilo', 0);
             });
+            
         });
         $( window ).resize(function() {
             verifyScreen();
