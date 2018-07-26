@@ -288,9 +288,10 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group">                            
                             <label for="local" class="col-sm-2 control-label">Localização </label>
                             <div class="col-sm-10">
+                                <input class="form-control" type="text" id="myPlaceTextBox" style="margin-bottom: 2%;"/>
                                 <?php echo $map['html']; ?>
                             </div>
                         </div>
@@ -305,8 +306,24 @@
                             <div class="col-sm-10">
                                 <input type="file" name="file" value="file" class="form-control-file" multiple>
                             </div>
-                        </div>               
-                        
+                        </div>     
+                        <div class="form-group">
+                            <label for="anexos" class="col-sm-2 control-label">Adicionados:</label>
+                            <div class="col-sm-10">
+                                <table id="anexos" class="table table-condensed">
+                                    <tr>
+                                        <thead>
+                                            <th>Formato</th>
+                                            <th>Nome</th>
+                                            <th>Ações</th>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>                                  
                     </div>
                 </div>
                 <div class="box-body">
@@ -315,14 +332,6 @@
             </div>
         </form>
     </div>
-
-    {{-- <div class="row footer-content">
-        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
-            <a href="http://www.videira.sc.gov.br/" target="_blank" style="color: #FFF;">Prefeitura Municipal de Videira
-                <p style="color: #FFF;">&copy; 2018 Equipe de Desenvolvimento do Setor de Ti.<p>
-            </a>
-        </div>  
-    </div> --}}
 @stop
 
 @section('css')
@@ -337,7 +346,62 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.js"></script>
     <?php echo $map['js']; ?>
     <script>
+    var anexs = new Array();
+
+    function removeAnex(id){
+        console.log(id);
+        anexs[id] = null;
+        $("#anexos tbody").empty();
+        polulaTabela();
+    }
+
+    function polulaTabela(){
+        var count = 0;
+        anexs.forEach(file => {
+            if(file != null){
+                if(file.type == "image/png" || file.type == "image/jpg" || file.type == "image/jpeg" || file.type == "image/gif"){
+                    $("#anexos > tbody:last-child").append("<tr><td><img src=\"{{ asset('img/ic_picture.png') }}\" width=\"20\" height=\"20\"></td><td><small>"+file.name+"</small></td><td><button type=\"button\" class=\"btn btn-sm btn-danger\" onclick=\"removeAnex("+count+")\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></button></td></tr>" );
+                }else if(file.type == "application/pdf"){
+                    $("#anexos > tbody:last-child").append("<tr><td><img src=\"{{ asset('img/ic_pdf.png') }}\" width=\"20\" height=\"20\"></td><td><small>"+file.name+"</small></td><td><button type=\"button\" class=\"btn btn-sm btn-danger\" onclick=\"removeAnex("+count+")\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></button></td></tr>" );
+                }else if(file.type == "application/msword" || file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+                    $("#anexos > tbody:last-child").append("<tr><td><img src=\"{{ asset('img/ic_doc.png') }}\" width=\"20\" height=\"20\"></td><td><small>"+file.name+"</small></td><td><button type=\"button\" class=\"btn btn-sm btn-danger\" onclick=\"removeAnex("+count+")\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></button></td></tr>" );
+                }else if(file.type == "application/vnd.ms-powerpoint" || file.type == "application/vnd.openxmlformats-officedocument.presentationml.presentation"){
+                    $("#anexos > tbody:last-child").append("<tr><td><img src=\"{{ asset('img/ic_ppt.png') }}\" width=\"20\" height=\"20\"></td><td><small>"+file.name+"</small></td><td><button type=\"button\" class=\"btn btn-sm btn-danger\" onclick=\"removeAnex("+count+")\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></button></td></tr>" );
+                }else if(file.type == "application/vnd.rar" || file.type == "application/zip"){
+                    $("#anexos > tbody:last-child").append("<tr><td><img src=\"{{ asset('img/ic_zip.png') }}\" width=\"20\" height=\"20\"></td><td><small>"+file.name+"</small></td><td><button type=\"button\" class=\"btn btn-sm btn-danger\" onclick=\"removeAnex("+count+")\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></button></td></tr>" );
+                }else if(file.type == "application/vnd.ms-excel" || file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
+                    $("#anexos > tbody:last-child").append("<tr><td><img src=\"{{ asset('img/ic_xls.png') }}\" width=\"20\" height=\"20\"></td><td><small>"+file.name+"</small></td><td><button type=\"button\" class=\"btn btn-sm btn-danger\" onclick=\"removeAnex("+count+")\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></button></td></tr>" );
+                }else if(file.type == "application/rtf"){
+                    $("#anexos > tbody:last-child").append("<tr><td><img src=\"{{ asset('img/ic_rtf.png') }}\" width=\"20\" height=\"20\"></td><td><small>"+file.name+"</small></td><td><button type=\"button\" class=\"btn btn-sm btn-danger\" onclick=\"removeAnex("+count+")\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></button></td></tr>" ); 
+                }
+                count++;
+            }
+            
+        });
+    }
+
     $(document).ready(function () {
+        $('input[type="file"]').change(function(e){
+            var files = Object.values(e.target.files);
+            var count = 0;
+            files.forEach(file => {
+               // console.log(file);
+                exist = true;
+                anexs.forEach(anex => {
+                    if(file.name == anex.name){
+                        exist = false;
+                    }
+                });
+
+                 if(exist){
+                    anexs.push(file);
+                 }
+                count++;
+            });
+            $("#anexos tbody").empty();
+            polulaTabela();
+        });
+        
 
         var navListItems = $('div.setup-box div a'),
             allWells = $('.setup-content'),
@@ -383,7 +447,7 @@
             var curInputs = curStep.find("input[type='text'],input[type='url']");
             var isValid = true;
 
-            console.log(curStepBtn);
+            // console.log(curStepBtn);
 
             $(".form-group").removeClass("has-error");
             for (var i = 0; i < curInputs.length; i++) {
@@ -422,8 +486,11 @@
 
         return true;
     }
+
+        
     </script>
     <script>
+
         function verifyTipoPessoa(){
 			var tipo = document.querySelector('input[name="tipoPessoa"]:checked').value;
 			if(tipo == 1){

@@ -26,6 +26,10 @@ class ManifestacaoController extends Controller
         $config['center'] = '-27.011083546744747, -51.14608210774662';
         $config['zoom'] = '16';
         $config['map_height'] = "40%";
+        $config['places'] = TRUE;
+        $config['placesAutocompleteInputID'] = 'myPlaceTextBox';
+        $config['placesAutocompleteBoundsMap'] = TRUE; // set results biased towards the maps viewport
+        $config['placesAutocompleteOnChange'] = '$("#input-latitude").val(event.latLng.lat()); $("#input-longitude").val(event.latLng.lng()); var myLatlng = new google.maps.LatLng(event.latLng.lat(), event.latLng.lng()); var markerOptions = { map: map, position: myLatlng, draggable: true};  marker_0 = createMarker_map(markerOptions);';
         GMaps::initialize($config);
 
         $marker = array();
@@ -35,10 +39,6 @@ class ManifestacaoController extends Controller
         GMaps::add_marker($marker);
         $map = GMaps::create_map();
 
-        // echo $map['js'];
-        // echo $map['html'];
-        // GMaps::load(view('manifestacao.manifestacao', $data));
-        //dd($map);
         return view('manifestacao.manifestacao', ['map' => $map]);
     }
 
