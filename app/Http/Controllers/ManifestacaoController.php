@@ -33,7 +33,7 @@ class ManifestacaoController extends Controller
         GMaps::initialize($config);
 
         $marker = array();
-        $marker['position'] = '-27.011083546744747, -51.14608210774662';
+        // $marker['position'] = '-27.011083546744747, -51.14608210774662';
         $marker['draggable'] = true;
         $marker['ondragend'] = '$("#input-latitude").val(event.latLng.lat()); $("#input-longitude").val(event.latLng.lng());';
         GMaps::add_marker($marker);
